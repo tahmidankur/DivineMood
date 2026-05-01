@@ -1,0 +1,25 @@
+{
+  "name": "Divine Mood",
+  "short_name": "Divine Mood",
+  "description": "A verse for every moment — find words from the Quran and Bible matched to how you feel.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0C0C0F",
+  "theme_color": "#0C0C0F",
+  "orientation": "portrait-primary",
+  "categories": ["lifestyle", "religion", "spirituality"],
+  "icons": [
+    {
+      "src": "assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

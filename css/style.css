@@ -1,6 +1,6 @@
 /* ==============================================
    style.css — All visual styles for Divine Mood
-   
+
    TABLE OF CONTENTS:
    1. Reset & Base Styles
    2. Shared / Reusable Styles
@@ -16,14 +16,11 @@
 
 /* -----------------------------------------------
    1. RESET & BASE STYLES
-   Remove browser default spacing and set defaults
 ----------------------------------------------- */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-
-  /* Removes the blue flash on tap for mobile */
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -31,12 +28,11 @@ body {
   font-family: 'DM Sans', sans-serif;
   background-color: #0C0C0F;
   color: #F0EDE8;
-  min-height: 100dvh; /* dvh = dynamic viewport height (works on mobile browsers) */
+  min-height: 100dvh;
   display: flex;
   justify-content: center;
 }
 
-/* The main app container — capped at phone width */
 #app {
   width: 100%;
   max-width: 440px;
@@ -49,10 +45,8 @@ body {
 
 /* -----------------------------------------------
    2. SHARED / REUSABLE STYLES
-   Buttons and text colors used across screens
 ----------------------------------------------- */
 
-/* Gold gradient button — used for main actions */
 .btn-gold {
   width: 100%;
   padding: 16px;
@@ -72,7 +66,6 @@ body {
   opacity: 0.9;
 }
 
-/* Outlined button — used for secondary actions */
 .btn-outline {
   width: 100%;
   padding: 15px;
@@ -91,12 +84,8 @@ body {
   color: #F0EDE8;
 }
 
-/* Reusable gold text color */
-.gold-text {
-  color: #D4A843;
-}
+.gold-text { color: #D4A843; }
 
-/* Loading spinner animation */
 .spinner {
   width: 36px;
   height: 36px;
@@ -106,59 +95,30 @@ body {
   animation: spin 0.8s linear infinite;
   margin: 60px auto;
 }
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-.loading-box {
-  text-align: center;
-  padding: 20px;
-}
-.loading-box p {
-  color: #6B6860;
-  font-size: 14px;
-  margin-top: 12px;
-}
+.loading-box { text-align: center; padding: 20px; }
+.loading-box p { color: #6B6860; font-size: 14px; margin-top: 12px; }
 
-/* Error message box */
-.error-box {
-  text-align: center;
-  padding: 40px 20px;
-}
-.error-box p {
-  color: #6B6860;
-  font-size: 14px;
-  margin: 10px 0 20px;
-}
+.error-box { text-align: center; padding: 40px 20px; }
+.error-box p { color: #6B6860; font-size: 14px; margin: 10px 0 20px; }
 
 
 /* -----------------------------------------------
    3. SCREEN SWITCHING
-   All screens are hidden. JS adds .active to show one.
 ----------------------------------------------- */
 .screen {
   display: none;
   flex-direction: column;
   min-height: 100dvh;
 }
-
-/* When JS adds the .active class, this screen becomes visible */
 .screen.active {
   display: flex;
-
-  /* Slide-up + fade animation when switching screens */
   animation: fadeUp 0.35s ease both;
 }
-
 @keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 
@@ -168,9 +128,11 @@ body {
 #screen-welcome {
   align-items: center;
   justify-content: space-between;
-  padding: 60px 28px 48px;
-
-  /* Subtle gold glow in background */
+  /*
+    Top padding accounts for the iOS status bar / notch / dynamic island.
+    env(safe-area-inset-top) = 0 in a browser, ~44-59px in a standalone PWA on iPhone.
+  */
+  padding: calc(52px + env(safe-area-inset-top)) 28px calc(32px + env(safe-area-inset-bottom));
   background: radial-gradient(ellipse at 50% 20%, rgba(212,168,67,0.12) 0%, transparent 65%);
 }
 
@@ -178,26 +140,34 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
+  gap: 28px;
   flex: 1;
   justify-content: center;
 }
 
-/* The floating golden arch SVG logo */
+/* Logo image (the actual PNG brand asset) */
+.logo-img {
+  width: 220px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 32px rgba(212,168,67,0.55));
+  animation: floatUp 3.5s ease-in-out infinite;
+}
+
+/* SVG arch — fallback when logo.png is not yet present */
 .logo-arch {
   width: 100px;
   height: 100px;
   filter: drop-shadow(0 0 30px rgba(212,168,67,0.5));
   animation: floatUp 3.5s ease-in-out infinite;
 }
+
 @keyframes floatUp {
   0%, 100% { transform: translateY(0px); }
   50%       { transform: translateY(-10px); }
 }
 
-.welcome-title {
-  text-align: center;
-}
+.welcome-title { text-align: center; }
 .welcome-title h1 {
   font-family: 'Playfair Display', serif;
   font-size: 42px;
@@ -233,11 +203,13 @@ body {
    5. SCREEN 2: MOOD GRID
 ----------------------------------------------- */
 #screen-moods {
-  padding-bottom: 80px; /* space for the bottom nav */
+  /* Extra bottom room for the fixed bottom nav + phone gesture bar */
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
 }
 
 .moods-header {
-  padding: 52px 24px 20px;
+  /* Top padding pushes content below the status bar / notch */
+  padding: calc(20px + env(safe-area-inset-top)) 24px 16px;
 }
 .moods-header h2 {
   font-family: 'Playfair Display', serif;
@@ -245,17 +217,19 @@ body {
   font-weight: 700;
   line-height: 1.2;
 }
-.moods-header h2 em {
-  font-style: italic;
-  color: #D4A843;
-}
-.moods-header p {
-  margin-top: 6px;
-  font-size: 14px;
-  color: #6B6860;
+.moods-header h2 em { font-style: italic; color: #D4A843; }
+.moods-header p     { margin-top: 6px; font-size: 14px; color: #6B6860; }
+
+/* Small brand logo at the top of the mood-picker screen */
+.logo-small {
+  display: block;
+  width: 130px;
+  height: auto;
+  object-fit: contain;
+  margin: 0 auto 10px;
+  filter: drop-shadow(0 0 14px rgba(212,168,67,0.4));
 }
 
-/* 2-column grid layout */
 .mood-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -263,7 +237,6 @@ body {
   padding: 16px 20px;
 }
 
-/* Individual mood card */
 .mood-card {
   border-radius: 20px;
   padding: 22px 16px;
@@ -274,15 +247,10 @@ body {
   cursor: pointer;
   border: 1.5px solid transparent;
   background: #161618;
-
-  /* Smooth hover and tap animations */
   transition: transform 0.2s, box-shadow 0.2s;
-
-  /* Each card pops in with a slight delay */
   animation: cardPop 0.4s ease both;
 }
 
-/* Stagger the pop-in animation for each card */
 .mood-card:nth-child(1) { animation-delay: 0.05s; }
 .mood-card:nth-child(2) { animation-delay: 0.10s; }
 .mood-card:nth-child(3) { animation-delay: 0.15s; }
@@ -312,15 +280,14 @@ body {
   padding-bottom: 20px;
 }
 
-/* Top bar: back button + mood pill */
 .verse-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 52px 20px 16px;
+  /* Push below status bar / notch */
+  padding: calc(16px + env(safe-area-inset-top)) 20px 16px;
 }
 
-/* Circular back button */
 .back-btn {
   width: 42px;
   height: 42px;
@@ -334,12 +301,8 @@ body {
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s;
 }
-.back-btn:hover {
-  color: #D4A843;
-  border-color: #D4A843;
-}
+.back-btn:hover { color: #D4A843; border-color: #D4A843; }
 
-/* Small pill showing the current mood */
 .mood-pill {
   background: rgba(212,168,67,0.12);
   border: 1px solid rgba(212,168,67,0.3);
@@ -350,7 +313,6 @@ body {
   font-weight: 600;
 }
 
-/* Quran / Bible switch */
 .tradition-toggle {
   display: flex;
   margin: 0 20px 20px;
@@ -378,7 +340,6 @@ body {
   color: #0C0C0F;
 }
 
-/* The verse card box */
 .verse-card {
   margin: 0 20px;
   background: #141418;
@@ -388,19 +349,14 @@ body {
   position: relative;
   overflow: hidden;
 }
-
-/* Gold shimmer bar at the top of the card */
 .verse-card::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   height: 3px;
   background: linear-gradient(90deg, #8B6E2A, #D4A843, #F0C860, #D4A843, #8B6E2A);
 }
 
-/* "📖 Al-Baqarah 2:255" reference badge */
 .verse-source {
   display: inline-flex;
   align-items: center;
@@ -414,18 +370,16 @@ body {
   margin-bottom: 20px;
 }
 
-/* Arabic text — must be right-to-left */
 .arabic-text {
   font-family: 'Noto Naskh Arabic', serif;
   font-size: 26px;
   line-height: 2.1;
-  direction: rtl;       /* right to left for Arabic */
+  direction: rtl;
   text-align: center;
   color: #F0EDE8;
   padding: 8px 0;
 }
 
-/* Thin gold line between Arabic and English */
 .verse-divider {
   border: none;
   height: 1px;
@@ -433,7 +387,6 @@ body {
   margin: 18px 0;
 }
 
-/* Italic English verse text */
 .english-text {
   font-family: 'Playfair Display', serif;
   font-size: 20px;
@@ -442,7 +395,6 @@ body {
   color: #E8E5E0;
 }
 
-/* Small translation credit below the verse */
 .translation-label {
   margin-top: 14px;
   font-size: 11px;
@@ -451,7 +403,6 @@ body {
   text-transform: uppercase;
 }
 
-/* Audio player bar */
 .audio-player {
   display: flex;
   align-items: center;
@@ -463,7 +414,6 @@ body {
   padding: 14px 18px;
 }
 
-/* Gold play/pause button */
 .play-btn {
   width: 44px;
   height: 44px;
@@ -484,17 +434,14 @@ body {
 .audio-info span   { display: block; font-size: 12px; color: #6B6860; }
 .audio-info strong { font-size: 14px; font-weight: 600; color: #F0EDE8; }
 
-/* Animated sound wave bars (only visible when playing) */
 .wave-bars {
   display: flex;
   align-items: center;
   gap: 3px;
-  opacity: 0;           /* hidden by default */
+  opacity: 0;
   transition: opacity 0.3s;
 }
-.wave-bars.playing {
-  opacity: 1;           /* JS adds .playing class when audio plays */
-}
+.wave-bars.playing { opacity: 1; }
 .wave-bars span {
   display: block;
   width: 3px;
@@ -502,7 +449,6 @@ body {
   background: #D4A843;
   animation: wave 1.1s ease-in-out infinite;
 }
-/* Each bar has a different height and delay to look like a real waveform */
 .wave-bars span:nth-child(1) { height: 8px;  animation-delay: 0.0s; }
 .wave-bars span:nth-child(2) { height: 16px; animation-delay: 0.15s; }
 .wave-bars span:nth-child(3) { height: 22px; animation-delay: 0.3s; }
@@ -513,7 +459,6 @@ body {
   50%       { transform: scaleY(1);   opacity: 1; }
 }
 
-/* Save / Share / Next buttons row */
 .verse-actions {
   display: flex;
   gap: 10px;
@@ -536,11 +481,7 @@ body {
   cursor: pointer;
   transition: all 0.2s;
 }
-.action-btn:hover {
-  border-color: #D4A843;
-  color: #F0EDE8;
-}
-/* When a verse is saved, the save button gets a gold highlight */
+.action-btn:hover { border-color: #D4A843; color: #F0EDE8; }
 .action-btn.saved {
   border-color: #D4A843;
   color: #D4A843;
@@ -552,35 +493,23 @@ body {
    7. SCREEN 4: SAVED VERSES
 ----------------------------------------------- */
 #screen-saved {
-  padding-bottom: 90px;
+  padding-bottom: calc(90px + env(safe-area-inset-bottom));
 }
 
 .saved-header {
-  padding: 52px 24px 20px;
+  /* Push below status bar / notch */
+  padding: calc(20px + env(safe-area-inset-top)) 24px 20px;
 }
 .saved-header h2 {
   font-family: 'Playfair Display', serif;
   font-size: 28px;
   font-weight: 700;
 }
-.saved-header h2 em {
-  font-style: italic;
-  color: #D4A843;
-}
-.saved-header p {
-  margin-top: 6px;
-  font-size: 14px;
-  color: #6B6860;
-}
+.saved-header h2 em { font-style: italic; color: #D4A843; }
+.saved-header p     { margin-top: 6px; font-size: 14px; color: #6B6860; }
 
-.saved-list {
-  padding: 0 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
+.saved-list { padding: 0 20px; display: flex; flex-direction: column; gap: 14px; }
 
-/* Each saved verse card */
 .saved-item {
   background: #141418;
   border: 1px solid #2A2A30;
@@ -591,9 +520,7 @@ body {
   gap: 10px;
   transition: border-color 0.2s;
 }
-.saved-item:hover {
-  border-color: rgba(212,168,67,0.3);
-}
+.saved-item:hover { border-color: rgba(212,168,67,0.3); }
 
 .saved-item-top {
   display: flex;
@@ -601,7 +528,6 @@ body {
   justify-content: space-between;
 }
 
-/* "📖 Quran" or "✝ Bible" badge */
 .source-badge {
   font-size: 11px;
   font-weight: 600;
@@ -611,7 +537,6 @@ body {
 .badge-quran { background: rgba(212,168,67,0.12); color: #D4A843; }
 .badge-bible { background: rgba(100,150,200,0.12); color: #7AA8D4; }
 
-/* Small × remove button */
 .remove-btn {
   width: 28px;
   height: 28px;
@@ -626,12 +551,8 @@ body {
   font-size: 14px;
   transition: color 0.2s, background 0.2s;
 }
-.remove-btn:hover {
-  background: rgba(224,80,80,0.15);
-  color: #E05050;
-}
+.remove-btn:hover { background: rgba(224,80,80,0.15); color: #E05050; }
 
-/* Arabic preview in saved card */
 .saved-arabic {
   font-family: 'Noto Naskh Arabic', serif;
   font-size: 20px;
@@ -641,7 +562,6 @@ body {
   color: #D4A843;
 }
 
-/* Italic English verse in saved card */
 .saved-english {
   font-family: 'Playfair Display', serif;
   font-size: 15px;
@@ -650,26 +570,21 @@ body {
   color: #C0BDB8;
 }
 
-.saved-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+.saved-meta { display: flex; justify-content: space-between; align-items: center; }
 .saved-ref  { font-size: 12px; color: #6B6860; }
 .saved-date { font-size: 11px; color: #404040; }
 
-/* When saved list is empty */
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-}
-.empty-icon { font-size: 52px; opacity: 0.3; margin-bottom: 16px; }
+.empty-state { text-align: center; padding: 60px 20px; }
+.empty-icon  { font-size: 52px; opacity: 0.3; margin-bottom: 16px; }
 .empty-state h3 { font-family: 'Playfair Display', serif; font-size: 22px; color: #6B6860; }
 .empty-state p  { margin-top: 8px; font-size: 14px; color: #404040; }
 
 
 /* -----------------------------------------------
    8. BOTTOM NAVIGATION
+   padding-bottom uses safe-area-inset-bottom so
+   the bar never hides behind the phone's home
+   indicator or gesture navigation strip.
 ----------------------------------------------- */
 .bottom-nav {
   position: fixed;
@@ -680,9 +595,10 @@ body {
   max-width: 440px;
   display: flex;
   background: rgba(12,12,15,0.92);
-  backdrop-filter: blur(16px);   /* frosted glass effect */
+  backdrop-filter: blur(16px);
   border-top: 1px solid #1E1E24;
-  padding: 10px 0 24px;
+  /* env(safe-area-inset-bottom) adds the home-indicator / gesture-strip height */
+  padding: 10px 0 calc(14px + env(safe-area-inset-bottom));
   z-index: 50;
 }
 
@@ -710,11 +626,11 @@ body {
 
 /* -----------------------------------------------
    9. TOAST NOTIFICATION
-   The small popup that briefly confirms an action
 ----------------------------------------------- */
 #toast {
   position: fixed;
-  bottom: 88px;
+  /* Sits above the bottom nav; accounts for safe-area too */
+  bottom: calc(80px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%) translateY(20px);
   background: #1E1E24;
