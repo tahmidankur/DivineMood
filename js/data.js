@@ -1,14 +1,6 @@
-// ================================================
-// data.js — All verse references
-//
-// This file just stores data. No logic here.
-//
-// Quran refs: { s: surahNumber, a: ayahNumber }
-//   Example: { s: 2, a: 255 } means Surah 2, Ayah 255
-//
-// Bible refs: plain text string
-//   Example: "John 3:16"
-// ================================================
+// data.js — verse references, nothing else
+// quran: { s: surah number, a: ayah number }
+// bible: plain string like "John 3:16"
 
 const VERSES = {
 
@@ -38,7 +30,7 @@ const VERSES = {
   sad: {
     quran: [
       { s: 94, a: 5  },   // "With hardship will be ease"
-      { s: 94, a: 6  },   // "Indeed with hardship will be ease" (repeated for emphasis)
+      { s: 94, a: 6  },   // repeated — the Quran says it twice for emphasis
       { s: 2,  a: 286 },  // "Allah does not burden a soul beyond that it can bear"
       { s: 65, a: 7  },   // "After hardship Allah will bring ease"
       { s: 3,  a: 139 },  // "Do not lose heart or grieve"
@@ -133,7 +125,7 @@ const VERSES = {
       { s: 3,  a: 173 },  // "Allah is sufficient for us"
       { s: 9,  a: 51  },  // "Nothing befalls us except what Allah decrees"
       { s: 65, a: 3   },  // "Whoever trusts in Allah, He is enough"
-      { s: 2,  a: 255 },  // "Ayat al-Kursi — His protection encompasses all"
+      { s: 2,  a: 255 },  // Ayat al-Kursi — His protection encompasses all
       { s: 114, a: 1  },  // "I seek refuge with the Lord of mankind"
       { s: 8,  a: 40  },  // "Allah is your protector"
       { s: 112, a: 1  },  // "Say: He is Allah, the One"
@@ -199,7 +191,7 @@ const VERSES = {
 };
 
 
-// Emoji shown in the pill at the top of the verse screen
+// emoji shown in the pill at the top of the verse screen
 const MOOD_EMOJI = {
   happy:    "Happy 😊",
   sad:      "Sad 😔",

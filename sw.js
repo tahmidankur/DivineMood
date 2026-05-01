@@ -12,7 +12,7 @@ const STATIC = [
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE).then(cache =>
-      // Cache individually so a missing logo/icon doesn't block the install
+      // catch per-file so a missing logo doesn't block the whole install
       Promise.all(STATIC.map(url => cache.add(url).catch(() => {})))
     )
   );
@@ -21,6 +21,7 @@ self.addEventListener('install', e => {
 
 self.addEventListener('activate', e => {
   e.waitUntil(
+    // clean up old cache versions on deploy
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
     )
@@ -31,7 +32,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const { hostname } = new URL(e.request.url);
 
-  // API calls are always network-only (live content)
+  // API calls go straight to the network — cached data would be stale
   if (hostname.includes('alquran.cloud') || hostname.includes('bible-api.com')) return;
 
   e.respondWith(
@@ -45,6 +46,7 @@ self.addEventListener('fetch', e => {
         }
         return res;
       }).catch(() => {
+        // offline page navigation falls back to the cached shell
         if (e.request.destination === 'document') {
           return caches.match('./index.html');
         }

@@ -2,45 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- viewport-fit=cover lets CSS env() safe-area-inset-* work on notch/island/gesture-bar devices -->
+  <!-- viewport-fit=cover makes safe-area env() vars work on notched phones -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Divine Mood</title>
 
-  <!-- PWA / home-screen meta -->
+  <!-- PWA home-screen stuff -->
   <meta name="theme-color" content="#0C0C0F" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <!-- black-translucent = status bar overlays the app; we compensate with safe-area-inset-top in CSS -->
+  <!-- black-translucent makes the status bar transparent; CSS handles the inset offset -->
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Divine Mood" />
   <meta name="description" content="A verse for every moment — Quran &amp; Bible verses matched to your mood." />
 
-  <!-- PWA manifest -->
   <link rel="manifest" href="manifest.json" />
-
-  <!-- Apple touch icon (uses the same 512px icon) -->
   <link rel="apple-touch-icon" href="assets/logo.png" />
 
-  <!-- Google Fonts -->
+  <!-- fonts: serif for verses, sans for UI, Arabic for Quran text -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=DM+Sans:wght@300;400;500;600&family=Noto+Naskh+Arabic:wght@400;600&display=swap" rel="stylesheet" />
 
-  <!-- Our CSS file -->
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 
 <div id="app">
 
-  <!-- ================================================
-       SCREEN 1: WELCOME
-  ================================================ -->
+  <!-- SCREEN 1: WELCOME -->
   <div id="screen-welcome" class="screen active">
     <div class="welcome-top">
 
-      <!--
-        Logo image (assets/logo.png) is shown when the file exists.
-        On load  → hide the SVG arch + text title (the PNG already includes that text).
-        On error → keep showing the SVG arch + title text as fallback.
-      -->
+      <!-- logo.png hides the SVG fallback on load; if it 404s we keep the SVG -->
       <img src="assets/logo.png"
            class="logo-img"
            alt="Divine Mood"
@@ -50,7 +40,7 @@
                    document.getElementById('title-text-fallback').style.display='none';"
            onerror="this.style.display='none';">
 
-      <!-- SVG fallback arch — visible by default, hidden once logo image loads -->
+      <!-- SVG arch — shows until logo.png loads -->
       <svg id="logo-svg-fallback" class="logo-arch" viewBox="0 0 100 100" fill="none">
         <defs>
           <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -62,7 +52,7 @@
         <polygon points="50,40 52,47 59,49 52,51 50,58 48,51 41,49 48,47" fill="#FFF8E0" opacity="0.95"/>
       </svg>
 
-      <!-- Text title — visible by default, hidden once logo image loads (logo PNG includes this text) -->
+      <!-- text fallback — logo PNG already includes this text, so we hide it on load -->
       <div class="welcome-title" id="title-text-fallback">
         <h1>Divine<br/><span class="gold-text">Mood</span></h1>
         <p class="welcome-subtitle">A verse for every moment</p>
@@ -80,13 +70,11 @@
   </div>
 
 
-  <!-- ================================================
-       SCREEN 2: MOOD PICKER
-  ================================================ -->
+  <!-- SCREEN 2: MOOD PICKER -->
   <div id="screen-moods" class="screen">
 
     <div class="moods-header">
-      <!-- Small logo at the top of the mood picker; hidden gracefully if file not found -->
+      <!-- small logo; hidden if logo.png isn't there -->
       <img src="assets/logo.png" class="logo-small" alt="Divine Mood" onerror="this.style.display='none'">
       <h2>How are you<br/><em>feeling today?</em></h2>
       <p>Tap a mood to find your verse</p>
@@ -148,9 +136,7 @@
   </div>
 
 
-  <!-- ================================================
-       SCREEN 3: VERSE DISPLAY
-  ================================================ -->
+  <!-- SCREEN 3: VERSE DISPLAY -->
   <div id="screen-verse" class="screen">
 
     <div class="verse-topbar">
@@ -199,9 +185,7 @@
   </div>
 
 
-  <!-- ================================================
-       SCREEN 4: SAVED VERSES
-  ================================================ -->
+  <!-- SCREEN 4: SAVED VERSES -->
   <div id="screen-saved" class="screen">
 
     <div class="saved-header">
@@ -231,7 +215,7 @@
 <script src="js/api.js"></script>
 <script src="js/app.js"></script>
 
-<!-- Register service worker for PWA offline support -->
+<!-- service worker for offline support -->
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {

@@ -1,52 +1,25 @@
-// ================================================
-// api.js — Functions that talk to external APIs
-//
-// We use two free APIs:
-// 1. Al-Quran Cloud  → api.alquran.cloud
-// 2. Bible API       → bible-api.com
-//
-// Both are completely free and need no API key.
-// ================================================
+// api.js — talks to al-quran.cloud and bible-api.com
+// both are free, no key needed
 
 
-// ------------------------------------------------
-// FETCH A QURAN VERSE
-//
-// How it works:
-//   - We send a request to the Al-Quran Cloud API
-//   - We ask for TWO editions at once: Arabic + English
-//   - The API returns both in one response
-//
-// Parameters:
-//   surah      = the chapter number  (e.g. 2)
-//   ayah       = the verse number    (e.g. 255)
-//   edition    = which English translation to use
-//
-// Returns an object with: id, source, reference,
-//   arabic, english, surah, ayah, label
-// ------------------------------------------------
+// Fetch a Quran verse — Arabic + English in one request.
+// Returns a normalized verse object the rest of the app can use.
 async function fetchQuranVerse(surah, ayah, edition = 'en.sahih') {
 
-  // Build the API URL
-  // "editions/quran-uthmani,en.sahih" asks for Arabic AND English in one call
+  // two editions separated by comma = one round trip instead of two
   const url = `https://api.alquran.cloud/v1/ayah/${surah}:${ayah}/editions/quran-uthmani,${edition}`;
 
-  // Call the API (async/await means "wait here until the response comes back")
   const response = await fetch(url);
   const data = await response.json();
 
-  // If the API returned an error, throw it so our app can show an error message
   if (data.code !== 200) {
     throw new Error('Quran API returned an error: ' + data.status);
   }
 
-  // The API returns an array of two items:
-  //   data.data[0] = Arabic edition
-  //   data.data[1] = English translation
+  // response is an array: [0] arabic, [1] english
   const arabicData  = data.data[0];
   const englishData = data.data[1];
 
-  // Build and return a clean verse object
   return {
     id:        'quran-' + surah + ':' + ayah,
     source:    'quran',
@@ -60,36 +33,19 @@ async function fetchQuranVerse(surah, ayah, edition = 'en.sahih') {
 }
 
 
-// ------------------------------------------------
-// FETCH A BIBLE VERSE
-//
-// How it works:
-//   - We send the reference string (e.g. "John 3:16")
-//     directly to the Bible API URL
-//   - The API returns the verse text
-//
-// Parameters:
-//   reference  = verse reference as a string (e.g. "John 3:16")
-//   translation = which translation to use (default: 'web')
-//
-// Returns an object with: id, source, reference,
-//   arabic (null for Bible), english, label
-// ------------------------------------------------
+// Fetch a Bible verse by reference string e.g. "John 3:16".
 async function fetchBibleVerse(reference, translation = 'web') {
 
-  // encodeURIComponent() turns spaces into %20 so the URL works correctly
-  // Example: "John 3:16" → "John%203%3A16"
   const url = `https://bible-api.com/${encodeURIComponent(reference)}?translation=${translation}`;
 
   const response = await fetch(url);
   const data = await response.json();
 
-  // The API returns { error: "..." } if something went wrong
   if (data.error) {
     throw new Error('Bible API error: ' + data.error);
   }
 
-  // Some references return multiple verses — join them all into one text block
+  // some references span multiple verses — join them into one block
   const text = data.verses
     ? data.verses.map(function(v) { return v.text.trim(); }).join(' ')
     : data.text.trim();
@@ -98,23 +54,14 @@ async function fetchBibleVerse(reference, translation = 'web') {
     id:        'bible-' + reference,
     source:    'bible',
     reference: data.reference || reference,
-    arabic:    null,   // Bible has no Arabic text
+    arabic:    null,
     english:   text,
     label:     'World English Bible',
   };
 }
 
 
-// ------------------------------------------------
-// FETCH QURAN AUDIO URL
-//
-// Returns a direct MP3 link for a given ayah
-// recited by Mishary Alafasy.
-//
-// Parameters:
-//   surah  = surah number
-//   ayah   = ayah number
-// ------------------------------------------------
+// Returns a direct MP3 URL for a given ayah recited by Mishary Alafasy.
 async function fetchQuranAudio(surah, ayah) {
   const url = `https://api.alquran.cloud/v1/ayah/${surah}:${ayah}/ar.alafasy`;
 
@@ -125,6 +72,5 @@ async function fetchQuranAudio(surah, ayah) {
     throw new Error('Audio not available');
   }
 
-  // The audio URL is inside data.data.audio
   return data.data.audio;
 }

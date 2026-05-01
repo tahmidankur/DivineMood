@@ -1,22 +1,17 @@
-/* ==============================================
-   style.css — All visual styles for Divine Mood
-
-   TABLE OF CONTENTS:
-   1. Reset & Base Styles
-   2. Shared / Reusable Styles
-   3. Screen Switching Animation
-   4. Screen 1: Welcome
-   5. Screen 2: Mood Grid
-   6. Screen 3: Verse Display
-   7. Screen 4: Saved Verses
-   8. Bottom Navigation
-   9. Toast Notification
-============================================== */
+/* style.css — Divine Mood
+   1. Reset & Base
+   2. Shared bits
+   3. Screen transitions
+   4. Welcome screen
+   5. Mood grid
+   6. Verse display
+   7. Saved verses
+   8. Bottom nav
+   9. Toast
+*/
 
 
-/* -----------------------------------------------
-   1. RESET & BASE STYLES
------------------------------------------------ */
+/* --- Reset & Base --- */
 * {
   margin: 0;
   padding: 0;
@@ -43,9 +38,7 @@ body {
 }
 
 
-/* -----------------------------------------------
-   2. SHARED / REUSABLE STYLES
------------------------------------------------ */
+/* --- Shared bits --- */
 
 .btn-gold {
   width: 100%;
@@ -104,9 +97,7 @@ body {
 .error-box p { color: #6B6860; font-size: 14px; margin: 10px 0 20px; }
 
 
-/* -----------------------------------------------
-   3. SCREEN SWITCHING
------------------------------------------------ */
+/* --- Screen transitions --- */
 .screen {
   display: none;
   flex-direction: column;
@@ -122,16 +113,11 @@ body {
 }
 
 
-/* -----------------------------------------------
-   4. SCREEN 1: WELCOME
------------------------------------------------ */
+/* --- Welcome screen --- */
 #screen-welcome {
   align-items: center;
   justify-content: space-between;
-  /*
-    Top padding accounts for the iOS status bar / notch / dynamic island.
-    env(safe-area-inset-top) = 0 in a browser, ~44-59px in a standalone PWA on iPhone.
-  */
+  /* extra top padding for the notch/dynamic island on iPhones */
   padding: calc(52px + env(safe-area-inset-top)) 28px calc(32px + env(safe-area-inset-bottom));
   background: radial-gradient(ellipse at 50% 20%, rgba(212,168,67,0.12) 0%, transparent 65%);
 }
@@ -145,7 +131,7 @@ body {
   justify-content: center;
 }
 
-/* Logo image (the actual PNG brand asset) */
+/* actual PNG logo */
 .logo-img {
   width: 220px;
   height: auto;
@@ -154,7 +140,7 @@ body {
   animation: floatUp 3.5s ease-in-out infinite;
 }
 
-/* SVG arch — fallback when logo.png is not yet present */
+/* SVG fallback — shown if logo.png fails to load */
 .logo-arch {
   width: 100px;
   height: 100px;
@@ -199,17 +185,15 @@ body {
 }
 
 
-/* -----------------------------------------------
-   5. SCREEN 2: MOOD GRID
------------------------------------------------ */
+/* --- Mood grid --- */
 #screen-moods {
-  /* Extra bottom room for the fixed bottom nav + phone gesture bar */
+  /* room for the fixed nav bar + phone gesture strip at the bottom */
   padding-bottom: calc(80px + env(safe-area-inset-bottom));
 }
 
 .moods-header {
-  /* Top padding pushes content below the status bar / notch */
   padding: calc(20px + env(safe-area-inset-top)) 24px 16px;
+  text-align: center;
 }
 .moods-header h2 {
   font-family: 'Playfair Display', serif;
@@ -220,7 +204,7 @@ body {
 .moods-header h2 em { font-style: italic; color: #D4A843; }
 .moods-header p     { margin-top: 6px; font-size: 14px; color: #6B6860; }
 
-/* Small brand logo at the top of the mood-picker screen */
+/* small logo above the mood grid */
 .logo-small {
   display: block;
   width: 130px;
@@ -273,9 +257,7 @@ body {
 .mood-sub   { font-size: 11px; color: #6B6860; text-align: center; line-height: 1.4; }
 
 
-/* -----------------------------------------------
-   6. SCREEN 3: VERSE DISPLAY
------------------------------------------------ */
+/* --- Verse display --- */
 #screen-verse {
   padding-bottom: 20px;
 }
@@ -284,7 +266,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* Push below status bar / notch */
+  /* account for the notch/status bar */
   padding: calc(16px + env(safe-area-inset-top)) 20px 16px;
 }
 
@@ -489,15 +471,13 @@ body {
 }
 
 
-/* -----------------------------------------------
-   7. SCREEN 4: SAVED VERSES
------------------------------------------------ */
+/* --- Saved verses --- */
 #screen-saved {
   padding-bottom: calc(90px + env(safe-area-inset-bottom));
 }
 
 .saved-header {
-  /* Push below status bar / notch */
+  /* notch spacing */
   padding: calc(20px + env(safe-area-inset-top)) 24px 20px;
 }
 .saved-header h2 {
@@ -580,12 +560,8 @@ body {
 .empty-state p  { margin-top: 8px; font-size: 14px; color: #404040; }
 
 
-/* -----------------------------------------------
-   8. BOTTOM NAVIGATION
-   padding-bottom uses safe-area-inset-bottom so
-   the bar never hides behind the phone's home
-   indicator or gesture navigation strip.
------------------------------------------------ */
+/* --- Bottom nav ---
+   safe-area-inset-bottom keeps it above the home indicator / gesture strip */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -597,7 +573,6 @@ body {
   background: rgba(12,12,15,0.92);
   backdrop-filter: blur(16px);
   border-top: 1px solid #1E1E24;
-  /* env(safe-area-inset-bottom) adds the home-indicator / gesture-strip height */
   padding: 10px 0 calc(14px + env(safe-area-inset-bottom));
   z-index: 50;
 }
@@ -624,12 +599,10 @@ body {
 .nav-btn svg    { width: 22px; height: 22px; }
 
 
-/* -----------------------------------------------
-   9. TOAST NOTIFICATION
------------------------------------------------ */
+/* --- Toast --- */
 #toast {
   position: fixed;
-  /* Sits above the bottom nav; accounts for safe-area too */
+  /* floats just above the bottom nav */
   bottom: calc(80px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%) translateY(20px);
