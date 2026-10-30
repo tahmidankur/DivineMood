@@ -1,76 +1,37 @@
-# 🕌 Divine Mood
+# Divine Mood
 
-A beautiful web app that matches your mood to verses from the **Quran** and **Bible**.
+Pick how you're feeling and get a verse from the Quran or the Bible that fits. Quran verses come with the Arabic text, an English translation and a recitation you can play.
 
-Built with plain HTML, CSS, and JavaScript — no frameworks, no installation needed.
+Live: https://divine-mood.vercel.app
 
----
+## Features
 
-## ✨ Features
+- 8 moods (happy, sad, anxious, hopeful, grateful, fearful, angry, lonely)
+- Switch between Quran and Bible for the same mood
+- Quran audio by Mishary Alafasy
+- Save verses (kept in localStorage) and share them
+- Installable as a PWA, works offline for the app shell
 
-- 8 moods: Happy, Sad, Anxious, Hopeful, Grateful, Fearful, Angry, Lonely
-- Quran verses with Arabic text + English translation
-- Bible verses in English
-- Quran audio recitation (Mishary Alafasy)
-- Save favourite verses (stored in your browser)
-- Share any verse with friends
-- Works on mobile and desktop
+## Running it
 
----
+It's plain HTML/CSS/JS, so any static server works:
 
-## 📁 Project Structure
-
-```
-divine-mood/
-│
-├── index.html        ← The HTML structure (4 screens)
-│
-├── css/
-│   └── style.css     ← All the visual styles and animations
-│
-├── js/
-│   ├── data.js       ← All verse references (Quran + Bible)
-│   ├── api.js        ← Functions that fetch verses from APIs
-│   └── app.js        ← All app logic (switching screens, saving, audio)
-│
-└── README.md         ← This file
+```bash
+python3 -m http.server
 ```
 
----
+then open http://localhost:8000.
 
-## 🚀 How to Run Locally
+## Files
 
-1. Open this folder in **VS Code**
-2. Install the **Live Server** extension (by Ritwick Dey)
-3. Right-click `index.html` → **Open with Live Server**
-4. App opens at `http://127.0.0.1:5500`
+- `js/data.js` - verse references for each mood
+- `js/api.js` - calls to the Quran and Bible APIs
+- `js/app.js` - screens, saving, sharing, audio
+- `sw.js` - service worker for offline caching
 
-No terminal, no npm, no install needed.
+## APIs
 
----
+- [Al-Quran Cloud](https://alquran.cloud/api) for Arabic text, Sahih International translation and audio
+- [bible-api.com](https://bible-api.com) for the World English Bible
 
-## 🌐 Deploy to GitHub Pages
-
-1. Push this folder to GitHub
-2. Go to repo → **Settings** → **Pages**
-3. Source: **Deploy from a branch** → branch: `main` → folder: `/ (root)`
-4. Click **Save**
-5. Live at: `https://your-username.github.io/divine-mood`
-
----
-
-## 📡 APIs Used
-
-| API | What it does | Cost |
-|-----|-------------|------|
-| [Al-Quran Cloud](https://alquran.cloud/api) | Arabic text, English translation, Audio MP3 | Free, no key |
-| [bible-api.com](https://bible-api.com) | Bible verse text | Free, no key |
-| [Google Fonts](https://fonts.google.com) | Playfair Display, DM Sans, Noto Naskh Arabic | Free |
-
----
-
-## 🛠️ Languages
-
-- **HTML** — page structure and 4 screens
-- **CSS** — all styles, colours, and animations
-- **JavaScript** — app logic, API calls, saving verses
+Neither needs an API key.

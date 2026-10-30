@@ -90,24 +90,15 @@ async function loadVerse() {
   updateSaveButton();
 
   try {
-    let verse;
+    const list = VERSES[currentMood][currentTradition];
+    const key = currentTradition + '_' + currentMood;
+    const i = verseIndex[key] || 0;
+    verseIndex[key] = i + 1;
+    const ref = list[i % list.length];
 
-    if (currentTradition === 'quran') {
-      const quranList = VERSES[currentMood].quran;
-      const key = 'q_' + currentMood;
-      if (verseIndex[key] === undefined) verseIndex[key] = 0;
-      const ref = quranList[verseIndex[key] % quranList.length];
-      verseIndex[key]++;
-      verse = await fetchQuranVerse(ref.s, ref.a);
-
-    } else {
-      const bibleList = VERSES[currentMood].bible;
-      const key = 'b_' + currentMood;
-      if (verseIndex[key] === undefined) verseIndex[key] = 0;
-      const ref = bibleList[verseIndex[key] % bibleList.length];
-      verseIndex[key]++;
-      verse = await fetchBibleVerse(ref);
-    }
+    const verse = currentTradition === 'quran'
+      ? await fetchQuranVerse(ref.s, ref.a)
+      : await fetchBibleVerse(ref);
 
     currentVerse = verse;
     displayVerse(verse);
