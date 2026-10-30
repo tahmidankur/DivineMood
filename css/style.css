@@ -77,7 +77,6 @@ body {
   color: #F0EDE8;
 }
 
-.gold-text { color: #D4A843; }
 
 .spinner {
   width: 36px;
@@ -131,7 +130,6 @@ body {
   justify-content: center;
 }
 
-/* actual PNG logo */
 .logo-img {
   width: 220px;
   height: auto;
@@ -140,33 +138,9 @@ body {
   animation: floatUp 3.5s ease-in-out infinite;
 }
 
-/* SVG fallback — shown if logo.png fails to load */
-.logo-arch {
-  width: 100px;
-  height: 100px;
-  filter: drop-shadow(0 0 30px rgba(212,168,67,0.5));
-  animation: floatUp 3.5s ease-in-out infinite;
-}
-
 @keyframes floatUp {
   0%, 100% { transform: translateY(0px); }
   50%       { transform: translateY(-10px); }
-}
-
-.welcome-title { text-align: center; }
-.welcome-title h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 42px;
-  font-weight: 700;
-  line-height: 1.1;
-}
-.welcome-subtitle {
-  margin-top: 12px;
-  font-size: 15px;
-  color: #6B6860;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-weight: 500;
 }
 
 .welcome-tagline {
