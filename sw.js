@@ -1,56 +1,119 @@
-const CACHE = 'divine-mood-v2';
+// sw.js — offline support for Divine Mood
+// Bump VERSION whenever you deploy so old caches get cleaned up.
+const VERSION = 'v5';
+const SHELL_CACHE = 'divine-mood-shell-' + VERSION;
+const VERSE_CACHE = 'divine-mood-verses';   // kept across versions: verse text never changes
+const FONT_CACHE  = 'divine-mood-fonts';
 
-const STATIC = [
+const SHELL = [
+  './',
   './index.html',
+  './manifest.json',
   './css/style.css',
   './js/data.js',
   './js/api.js',
   './js/app.js',
-  './assets/logo.png',
+  './js/pwa.js',
+  './assets/icons/icon-192.png',
+  './assets/icons/icon-512.png',
+  './assets/icons/apple-touch-icon.png',
+  './assets/icons/favicon-32.png',
 ];
 
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(cache =>
-      // catch per-file so a missing logo doesn't block the whole install
-      Promise.all(STATIC.map(url => cache.add(url).catch(() => {})))
+const KEEP = [SHELL_CACHE, VERSE_CACHE, FONT_CACHE];
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(SHELL_CACHE).then(cache =>
+      // per-file so one missing asset doesn't block the whole install
+      Promise.all(SHELL.map(url => cache.add(new Request(url, { cache: 'reload' })).catch(() => {})))
     )
   );
-  self.skipWaiting();
+  // don't skipWaiting here: the page shows an "update available" banner and
+  // sends SKIP_WAITING when the user taps it, so nothing swaps mid-session
 });
 
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    // clean up old cache versions on deploy
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    )
+self.addEventListener('message', event => {
+  if (event.data === 'SKIP_WAITING') self.skipWaiting();
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k => !KEEP.includes(k)).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-self.addEventListener('fetch', e => {
-  const { hostname } = new URL(e.request.url);
+self.addEventListener('fetch', event => {
+  const req = event.request;
+  if (req.method !== 'GET') return;
 
-  // API calls go straight to the network — cached data would be stale
-  if (hostname.includes('alquran.cloud') || hostname.includes('bible-api.com')) return;
+  const url = new URL(req.url);
 
-  e.respondWith(
-    caches.match(e.request).then(cached => {
-      if (cached) return cached;
+  // Page loads: network first so deploys show up, cached shell when offline
+  if (req.mode === 'navigate') {
+    event.respondWith(networkFirst(req, SHELL_CACHE, './index.html'));
+    return;
+  }
 
-      return fetch(e.request).then(res => {
-        if (res.ok && e.request.method === 'GET') {
-          const clone = res.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
-        }
-        return res;
-      }).catch(() => {
-        // offline page navigation falls back to the cached shell
-        if (e.request.destination === 'document') {
-          return caches.match('./index.html');
-        }
-      });
+  // Verse text: once fetched it never changes, so serve from cache when we have it.
+  // This lets saved / previously seen verses load offline.
+  if (url.hostname === 'api.alquran.cloud' && !url.pathname.includes('ar.alafasy')) {
+    event.respondWith(cacheFirst(req, VERSE_CACHE));
+    return;
+  }
+  if (url.hostname === 'bible-api.com') {
+    event.respondWith(cacheFirst(req, VERSE_CACHE));
+    return;
+  }
+
+  // Google Fonts
+  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
+    event.respondWith(staleWhileRevalidate(req, FONT_CACHE));
+    return;
+  }
+
+  // Our own files: always fresh when online, cached copy when offline
+  if (url.origin === self.location.origin) {
+    event.respondWith(networkFirst(req, SHELL_CACHE));
+  }
+  // anything else (audio streams etc.) goes straight to the network
+});
+
+
+async function networkFirst(req, cacheName, fallbackUrl) {
+  const cache = await caches.open(cacheName);
+  try {
+    // 'no-cache' revalidates with the server (cheap 304) instead of trusting the HTTP cache,
+    // so a fresh deploy is picked up on the next load
+    const res = await fetch(req.mode === 'navigate' ? req : new Request(req, { cache: 'no-cache' }));
+    if (res.ok) cache.put(req, res.clone());
+    return res;
+  } catch (err) {
+    return (await cache.match(req, { ignoreSearch: true }))
+        || (fallbackUrl && await cache.match(fallbackUrl))
+        || Response.error();
+  }
+}
+
+async function cacheFirst(req, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(req);
+  if (cached) return cached;
+  const res = await fetch(req);
+  if (res.ok) cache.put(req, res.clone());
+  return res;
+}
+
+async function staleWhileRevalidate(req, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(req);
+  const network = fetch(req)
+    .then(res => {
+      if (res.ok || res.type === 'opaque') cache.put(req, res.clone());
+      return res;
     })
-  );
-});
+    .catch(() => cached || Response.error());
+  return cached || network;
+}
