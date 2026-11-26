@@ -504,6 +504,28 @@ function hideToast() {
 }
 
 
+// --- Splash: show the logo briefly on launch, then fade into the app ---
+(function hideSplash() {
+  const splash = document.getElementById('splash');
+  if (!splash) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const minTime = reduced ? 300 : 1400;
+  const started = performance.now();
+
+  function hide() {
+    const wait = Math.max(0, minTime - (performance.now() - started));
+    setTimeout(function() {
+      splash.classList.add('hide');
+      setTimeout(function() { splash.remove(); }, 600);
+    }, wait);
+  }
+
+  if (document.readyState === 'complete') hide();
+  else window.addEventListener('load', hide);
+  setTimeout(hide, 4000);  // never leave it stuck on a slow connection
+})();
+
+
 // --- Keyboard shortcuts on the verse screen (desktop) ---
 document.addEventListener('keydown', function(e) {
   if (!document.getElementById('screen-verse').classList.contains('active')) return;

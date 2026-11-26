@@ -1,6 +1,6 @@
 // sw.js — offline support for Divine Mood
 // Bump VERSION whenever you deploy so old caches get cleaned up.
-const VERSION = 'v5';
+const VERSION = 'v6';
 const SHELL_CACHE = 'divine-mood-shell-' + VERSION;
 const VERSE_CACHE = 'divine-mood-verses';   // kept across versions: verse text never changes
 const FONT_CACHE  = 'divine-mood-fonts';
